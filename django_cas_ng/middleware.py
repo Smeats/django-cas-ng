@@ -17,6 +17,9 @@ from .views import LoginView as cas_login, LogoutView as cas_logout
 __all__ = ['CASMiddleware']
 
 
+import logging
+logger = logging.getLogger('django')
+
 class CASMiddleware(MiddlewareMixin):
     """Middleware that allows CAS authentication on admin pages"""
 
@@ -35,6 +38,7 @@ class CASMiddleware(MiddlewareMixin):
         logout.
         """
 
+        logger.debug(view_func)
         if view_func == login:
             return cas_login(request, *view_args, **view_kwargs)
         elif view_func == logout:
