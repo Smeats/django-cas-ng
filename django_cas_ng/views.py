@@ -29,9 +29,6 @@ from .utils import (
 
 SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
 
-import logging
-logger = logging.getLogger('django')
-
 
 __all__ = ['LoginView', 'LogoutView', 'CallbackView']
 
@@ -89,8 +86,6 @@ class LoginView(View):
 
         ticket = request.GET.get('ticket')
         if ticket:
-            logger.debug(ticket)
-            logger.debug(service_url)
             user = authenticate(ticket=ticket,
                                 service=service_url,
                                 request=request)
