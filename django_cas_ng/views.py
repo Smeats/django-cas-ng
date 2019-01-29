@@ -47,7 +47,7 @@ class LoginView(View):
         :param next_page:
         :return:
         """
-        return HttpResponseRedirect(get_service_url(request))
+        return None
 
     def post(self, request):
         if request.POST.get('logoutRequest'):
