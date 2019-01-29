@@ -51,12 +51,11 @@ class LoginView(View):
 
     def post(self, request):
         if request.POST.get('logoutRequest'):
-            next_page = request.POST.get('next', settings.CAS_REDIRECT_URL)
-            service_url = get_service_url(request, next_page)
+            service_url = get_service_url(request)
             client = get_cas_client(service_url=service_url, request=request)
 
             clean_sessions(client, request)
-            return HttpResponseRedirect(next_page)
+            return HttpResponseRedirect(service_url)
 
     def get(self, request):
         """
@@ -65,24 +64,16 @@ class LoginView(View):
         :param request:
         :return:
         """
-        next_page = request.GET.get('next')
         required = request.GET.get('required', False)
 
-        service_url = get_service_url(request, next_page)
+        service_url = get_service_url(request)
         client = get_cas_client(service_url=service_url, request=request)
-
-        if not next_page and settings.CAS_STORE_NEXT and 'CASNEXT' in request.session:
-            next_page = request.session['CASNEXT']
-            del request.session['CASNEXT']
-
-        if not next_page:
-            next_page = get_redirect_url(request)
 
         if request.user.is_authenticated:
             if settings.CAS_LOGGED_MSG is not None:
                 message = settings.CAS_LOGGED_MSG % request.user.get_username()
                 messages.success(request, message)
-            return self.successful_login(request=request, next_page=next_page)
+            return self.successful_login(request=request)
 
         ticket = request.GET.get('ticket')
         if ticket:
